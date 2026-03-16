@@ -1,0 +1,15 @@
+# Fortran 编译产生的目标文件
+*.o
+*.mod
+
+# 可执行文件（Linux/macOS 无扩展名，Windows 为 .exe）
+*.exe
+a.out
+
+# 编译器临时文件
+*.i90
+*.lst
+
+# 各章节示例编译后的可执行文件（通配）
+chapter*/a.out
+examples/a.out
