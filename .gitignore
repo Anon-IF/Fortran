@@ -1,0 +1,26 @@
+# Fortran 编译产物
+*.o
+*.mod
+*.smod
+
+# 可执行文件（Linux/macOS，无扩展名）
+examples/01_hello_world/hello
+examples/02_variables/variables
+examples/03_control_flow/if_example
+examples/03_control_flow/loop_example
+examples/04_arrays/arrays
+examples/05_functions/functions
+examples/06_modules/main_program
+examples/07_file_io/file_io
+examples/08_numerical_methods/newton_method
+examples/08_numerical_methods/numerical_integration
+examples/08_numerical_methods/newton
+examples/08_numerical_methods/num_int
+
+# Windows 可执行文件
+*.exe
+
+# 程序运行产生的数据文件
+examples/07_file_io/data.txt
+examples/07_file_io/output.txt
+examples/08_numerical_methods/*.txt
