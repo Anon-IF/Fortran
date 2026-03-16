@@ -1,0 +1,14 @@
+# Fortran compiled module files
+*.mod
+
+# Compiled object files
+*.o
+
+# Executables (no extension on Linux/macOS)
+# Add specific names if needed, e.g.:
+# hello
+# newton_method
+
+# Common OS files
+.DS_Store
+Thumbs.db

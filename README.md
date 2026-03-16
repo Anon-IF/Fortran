@@ -1,118 +1,178 @@
 # Fortran 学习指南
 
-学习Fortran辅助
+> 本项目依据《工程分析程序设计》教材内容整理，面向计算机初学者，
+> 帮助读者系统掌握 Fortran 语言并应用于工程计算。
+
+---
+
+## 仓库结构
+
+```
+Fortran/
+├── README.md              # 本学习指南
+├── chapter01/             # 第一章：Fortran 简介与第一个程序
+│   ├── hello.f90          # Hello World
+│   └── basic_io.f90       # 基本输入输出
+├── chapter02/             # 第二章：数据类型、变量与表达式
+│   ├── data_types.f90     # 整型/实型/复数/逻辑/字符类型
+│   └── expressions.f90    # 运算符、类型转换、数学函数
+├── chapter03/             # 第三章：程序流程控制
+│   ├── if_example.f90     # if-else 条件语句
+│   ├── do_example.f90     # do / do while 循环
+│   └── select_example.f90 # select case 多分支
+├── chapter04/             # 第四章：数组
+│   ├── array_basic.f90    # 一维数组基本操作
+│   ├── matrix_ops.f90     # 二维数组（矩阵运算）
+│   └── dynamic_array.f90  # 可分配数组（动态内存）
+├── chapter05/             # 第五章：子程序与函数
+│   ├── subroutines.f90    # 子例程（subroutine）与 intent
+│   └── functions.f90      # 函数（function）与递归
+├── chapter06/             # 第六章：文件操作与格式化 I/O
+│   └── file_io.f90        # open/read/write/close 及格式符
+├── chapter07/             # 第七章：模块化编程
+│   └── module_demo.f90    # module 定义、use、public/private
+└── examples/              # 工程应用示例
+    ├── newton_method.f90      # 牛顿迭代法求方程根
+    ├── gaussian_elim.f90      # 高斯消元法求解线性方程组
+    ├── numerical_integration.f90  # 数值积分（梯形法 & 辛普森法）
+    └── projectile.f90         # 抛体运动轨迹模拟
+```
 
 ---
 
 ## 一、Fortran 简介
 
-Fortran（Formula Translation）是最早的高级编程语言之一，诞生于1957年，主要用于**科学计算、数值分析、气象预测、物理模拟**等领域。现代 Fortran（Fortran 90/95/2003/2008/2018）已支持面向对象、模块化等现代编程特性，至今仍在高性能计算（HPC）领域广泛使用。
+Fortran（**For**mula **Tran**slation）是最早的高级编程语言之一，诞生于1957年，
+主要用于**科学计算、数值分析、工程仿真、气象预测**等领域。
+现代 Fortran（Fortran 90/95/2003/2008/2018）已支持模块化、面向对象、并行等
+现代编程特性，至今仍是高性能计算（HPC）领域的主流语言之一。
 
 ---
 
 ## 二、学习前的准备
 
-1. **安装编译器**
-   - 推荐：[GNU Fortran（gfortran）](https://gcc.gnu.org/fortran/)，免费开源，跨平台
-   - 安装方式：
-     - Linux/macOS：`sudo apt install gfortran` 或 `brew install gcc`
-     - Windows：通过 [MinGW-w64](https://www.mingw-w64.org/) 或 [MSYS2](https://www.msys2.org/) 安装
-   - 验证安装：`gfortran --version`
+### 1. 安装编译器
 
-2. **选择编辑器 / IDE**
-   - VS Code + [Modern Fortran 插件](https://marketplace.visualstudio.com/items?itemName=fortran-lang.linter-gfortran)
-   - Vim / Emacs（配合语法高亮插件）
-   - Intel oneAPI（含 `ifort`，适合高性能场景）
+推荐：**GNU Fortran（gfortran）**，免费开源，跨平台。
 
-3. **了解基本的命令行操作**（编译与运行 Fortran 程序需要终端）
+| 平台 | 安装命令 |
+|------|---------|
+| Ubuntu/Debian | `sudo apt install gfortran` |
+| macOS (Homebrew) | `brew install gcc` |
+| Windows | 通过 [MSYS2](https://www.msys2.org/) 安装：`pacman -S mingw-w64-x86_64-gcc-fortran` |
+
+验证安装：
+```bash
+gfortran --version
+```
+
+### 2. 编译与运行流程
+
+```bash
+# 编译：将源码 (.f90) 编译为可执行文件
+gfortran hello.f90 -o hello
+
+# 运行
+./hello          # Linux/macOS
+hello.exe        # Windows
+```
+
+### 3. 选择编辑器
+
+- **VS Code** + [Modern Fortran 插件](https://marketplace.visualstudio.com/items?itemName=fortran-lang.linter-gfortran)（推荐初学者）
+- Vim / Emacs（配合语法高亮插件）
+- Intel oneAPI（含 `ifort`，适合高性能场景）
 
 ---
 
-## 三、学习步骤与内容
+## 三、各章知识要点
 
-### 第一阶段：基础入门
+### 第一章：第一个 Fortran 程序（`chapter01/`）
 
-#### 1. 第一个 Fortran 程序
 ```fortran
 program hello
-  implicit none
+  implicit none          ! 强制显式声明所有变量
   print *, "Hello, Fortran!"
 end program hello
 ```
-编译与运行：
-```bash
-gfortran hello.f90 -o hello
-./hello
-```
 
-#### 2. 基本语法规则
-- 程序结构：`program` / `end program`
-- `implicit none`（强制变量显式声明，强烈建议始终使用）
-- 注释：`!` 开头
-- 续行：`&` 符号
-- 大小写不敏感
-
-#### 3. 数据类型与变量声明
-| 类型 | 说明 | 示例 |
-|------|------|------|
-| `integer` | 整数 | `integer :: n = 10` |
-| `real` | 单精度浮点数 | `real :: x = 3.14` |
-| `double precision` | 双精度浮点数 | `double precision :: y` |
-| `complex` | 复数 | `complex :: z` |
-| `logical` | 逻辑值 | `logical :: flag = .true.` |
-| `character` | 字符串 | `character(len=20) :: name` |
-
-#### 4. 运算符与表达式
-- 算术运算符：`+`、`-`、`*`、`/`、`**`（幂运算）
-- 关系运算符：`==`、`/=`（不等）、`<`、`>`、`<=`、`>=`
-- 逻辑运算符：`.and.`、`.or.`、`.not.`
-
-#### 5. 输入与输出
-```fortran
-read *, x          ! 从标准输入读取
-print *, "x =", x  ! 输出到标准输出
-write(*,*) "..."   ! 等价写法
-```
+**核心规则：**
+- 每个程序以 `program 名称` 开始，以 `end program 名称` 结束
+- **始终写 `implicit none`**，防止因变量名拼写错误引发难以察觉的 bug
+- 注释用 `!` 开头；跨行用 `&` 续行；大小写不敏感
 
 ---
 
-### 第二阶段：流程控制
+### 第二章：数据类型与表达式（`chapter02/`）
 
-#### 6. 条件语句
+#### 基本数据类型
+
+| 类型 | 说明 | 示例 |
+|------|------|------|
+| `integer` | 整数 | `integer :: n = 10` |
+| `real` | 单精度浮点数（约7位有效数字） | `real :: x = 3.14` |
+| `real(8)` 或 `double precision` | 双精度浮点数（约15位有效数字） | `real(8) :: y = 3.14_8` |
+| `complex` | 复数 | `complex :: z = (1.0, 2.0)` |
+| `logical` | 逻辑值 | `logical :: flag = .true.` |
+| `character(len=N)` | 字符串 | `character(len=20) :: name` |
+
+#### 运算符优先级（从高到低）
+1. `**`（幂）
+2. `*`、`/`（乘除）
+3. `+`、`-`（加减）
+4. `==`、`/=`、`<`、`>`、`<=`、`>=`（关系）
+5. `.not.`（逻辑非）
+6. `.and.`（逻辑与）
+7. `.or.`（逻辑或）
+
+> ⚠️ **注意**：整数除法会截断小数部分！`7 / 2 = 3`（不是 3.5）
+
+---
+
+### 第三章：程序流程控制（`chapter03/`）
+
+#### if 条件语句
 ```fortran
-if (x > 0) then
+if (x > 0.0) then
   print *, "正数"
-else if (x < 0) then
+else if (x < 0.0) then
   print *, "负数"
 else
   print *, "零"
 end if
 ```
 
-#### 7. 循环
+#### do 循环
 ```fortran
-! do 循环
+! 计数循环：i 从 1 到 10，步长为 1
 do i = 1, 10
   print *, i
 end do
 
-! do while 循环
-do while (x > 0)
-  x = x - 1
+! 步长为 2（奇数序列）
+do i = 1, 19, 2
+  print *, i
 end do
 
-! 退出循环
-exit   ! 相当于 break
-cycle  ! 相当于 continue
+! 条件循环
+do while (x > 0.0)
+  x = x - 1.0
+end do
+
+! 流程控制
+exit   ! 立即退出整个循环（类似 break）
+cycle  ! 跳过本次迭代继续下一次（类似 continue）
 ```
 
-#### 8. select case 语句
+#### select case 语句
 ```fortran
 select case (n)
   case (1)
     print *, "一"
-  case (2:5)
+  case (2:5)        ! 范围匹配
     print *, "二到五"
+  case (7, 9, 11)   ! 多值匹配
+    print *, "7、9或11"
   case default
     print *, "其他"
 end select
@@ -120,203 +180,201 @@ end select
 
 ---
 
-### 第三阶段：数组（Fortran 的核心特性）
+### 第四章：数组（`chapter04/`）
 
-#### 9. 数组声明与初始化
+Fortran 中数组**下标从 1 开始**（与 C/Python 不同）。
+
 ```fortran
-real, dimension(5) :: a          ! 一维数组
-real :: b(3, 3)                  ! 二维数组（矩阵）
-integer :: c(10) = [(i, i=1,10)] ! 数组构造器
+! 声明
+real :: a(10)               ! 一维数组，10个元素
+real :: b(3, 3)             ! 二维数组（3×3矩阵）
+real, allocatable :: c(:)   ! 可分配数组
+
+! 初始化
+a = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+a = 0.0                     ! 所有元素赋值为0
+a = a * 2.0                 ! 逐元素运算
+
+! 切片
+a(3:7)     ! 第3到7个元素
+a(1:10:2)  ! 第1、3、5、7、9个元素（步长2）
+
+! 动态数组
+allocate(c(n))
+deallocate(c)
 ```
 
-#### 10. 数组操作
-```fortran
-a(1) = 3.14          ! 索引从 1 开始
-b(2, 3) = 0.0
-a = 0.0              ! 整体赋值
-a = a * 2            ! 逐元素运算
-```
+**常用内置函数：**
 
-#### 11. 内置数组函数
 | 函数 | 功能 |
 |------|------|
 | `size(a)` | 元素总数 |
-| `shape(a)` | 各维度大小 |
 | `sum(a)` | 求和 |
-| `maxval(a)` | 最大值 |
-| `minval(a)` | 最小值 |
+| `maxval(a)` / `minval(a)` | 最大/最小值 |
+| `maxloc(a,1)` / `minloc(a,1)` | 最大/最小值的位置 |
 | `matmul(a, b)` | 矩阵乘法 |
 | `transpose(a)` | 矩阵转置 |
-
-#### 12. 动态数组（可分配数组）
-```fortran
-real, allocatable :: arr(:)
-allocate(arr(n))
-! 使用 arr ...
-deallocate(arr)
-```
+| `dot_product(a, b)` | 向量点积 |
 
 ---
 
-### 第四阶段：子程序与函数
+### 第五章：子程序与函数（`chapter05/`）
 
-#### 13. 子例程（subroutine）
+#### 子例程（subroutine）—— 无返回值，用 `call` 调用
 ```fortran
 subroutine swap(a, b)
   implicit none
-  real, intent(inout) :: a, b
+  real, intent(inout) :: a, b  ! intent 声明参数用途
   real :: temp
-  temp = a; a = b; b = temp
+  temp = a;  a = b;  b = temp
 end subroutine swap
 
-! 调用
-call swap(x, y)
+call swap(x, y)   ! 调用
 ```
 
-#### 14. 函数（function）
+#### 函数（function）—— 有返回值
 ```fortran
-real function square(x)
+pure real function square(x)
   implicit none
   real, intent(in) :: x
   square = x * x
 end function square
 
-! 调用
-result = square(3.0)
+result = square(3.0)   ! 调用
 ```
 
-#### 15. `intent` 属性
-| 属性 | 含义 |
-|------|------|
-| `intent(in)` | 只读参数 |
-| `intent(out)` | 只写参数（输出） |
-| `intent(inout)` | 可读写参数 |
+#### `intent` 属性（重要！）
+
+| 属性 | 含义 | 作用 |
+|------|------|------|
+| `intent(in)` | 输入参数 | 只读，不可修改 |
+| `intent(out)` | 输出参数 | 进入时不保证有值，只用于输出 |
+| `intent(inout)` | 双向参数 | 可读取也可修改 |
 
 ---
 
-### 第五阶段：模块化编程
+### 第六章：文件操作与格式化 I/O（`chapter06/`）
 
-#### 16. 模块（module）
 ```fortran
-module math_utils
-  implicit none
-  real(8), parameter :: PI = 3.141592653589793238_8
-contains
-  real function circle_area(r)
-    real, intent(in) :: r
-    circle_area = PI * r * r
-  end function circle_area
-end module math_utils
-
-! 使用模块
-program main
-  use math_utils
-  implicit none
-  print *, circle_area(5.0)
-end program main
-```
-
-#### 17. 模块的优势
-- 封装数据和过程
-- 控制访问权限（`public` / `private`）
-- 避免全局变量污染
-
----
-
-### 第六阶段：文件操作与格式化 I/O
-
-#### 18. 文件读写
-```fortran
-open(unit=10, file="data.txt", status="old", action="read")
-read(10, *) x, y
+! 写文件
+open(unit=10, file="result.txt", status="replace", action="write")
+write(10, "(i4, 2f10.4)") i, x, y
 close(10)
 
-open(unit=20, file="output.txt", status="replace", action="write")
-write(20, "(f10.4)") result
+! 读文件
+open(unit=20, file="data.txt", status="old", action="read", iostat=ios)
+read(20, *, iostat=ios) x, y
 close(20)
 ```
 
-#### 19. 格式化输出
+**常用格式说明符：**
+
+| 格式符 | 说明 | 示例 |
+|--------|------|------|
+| `iW` | 整数，宽度W | `i5` → `   42` |
+| `fW.D` | 小数，宽度W，D位小数 | `f10.4` → `    3.1416` |
+| `eW.D` | 科学计数法 | `e12.4` → `  3.1416E+00` |
+| `aW` | 字符串 | `a10` → 宽度10的字符串 |
+
+---
+
+### 第七章：模块化编程（`chapter07/`）
+
 ```fortran
-write(*, "(a, i5, f10.3)") "n=", n, x
-! a: 字符串，i: 整数，f: 浮点数，e: 科学计数法
+module my_module
+  implicit none
+  private                    ! 默认所有符号私有
+  public :: my_function      ! 显式公开
+
+  real(8), parameter :: PI = 3.14159265358979323846_8
+
+contains
+
+  pure real(8) function my_function(x)
+    real(8), intent(in) :: x
+    my_function = PI * x * x
+  end function my_function
+
+end module my_module
+
+! 在主程序中使用
+program main
+  use my_module
+  implicit none
+  print *, my_function(5.0_8)
+end program main
+```
+
+**模块的优势：**
+- 将相关变量和过程封装在一起
+- 用 `private`/`public` 控制访问权限
+- 避免全局变量污染，提高代码可维护性
+
+---
+
+## 四、工程应用示例（`examples/`）
+
+### 牛顿迭代法（`newton_method.f90`）
+求解方程 $f(x) = x^3 - 2x - 5 = 0$ 的根。
+迭代公式：$x_{n+1} = x_n - \dfrac{f(x_n)}{f'(x_n)}$
+
+### 高斯消元法（`gaussian_elim.f90`）
+用带部分主元选取的高斯消元法求解线性方程组 $Ax = b$。
+
+### 数值积分（`numerical_integration.f90`）
+用梯形法则和辛普森1/3法则计算 $\displaystyle\int_0^{\pi} \sin(x)\,dx = 2$，并比较精度。
+
+### 抛体运动模拟（`projectile.f90`）
+根据给定的初速度和发射角，计算并输出抛体运动轨迹坐标。
+
+---
+
+## 五、快速编译运行指南
+
+```bash
+# 进入对应章节目录并编译
+cd chapter01
+gfortran hello.f90 -o hello && ./hello
+
+# 带优化编译（工程计算推荐）
+gfortran -O2 -o newton examples/newton_method.f90 && ./newton
+
+# 检查语法（不生成可执行文件）
+gfortran -fsyntax-only program.f90
 ```
 
 ---
 
-### 第七阶段：现代 Fortran 特性（Fortran 90/95/2003+）
+## 六、推荐学习路线
 
-#### 20. 指针（pointer）
-```fortran
-real, pointer :: p
-real, target  :: x = 1.0
-p => x
-print *, p  ! 输出 1.0
 ```
-
-#### 21. 派生类型（结构体）
-```fortran
-type :: point
-  real :: x, y
-end type point
-
-type(point) :: p
-p%x = 1.0
-p%y = 2.0
+第1周：环境搭建 → chapter01（Hello World + 基本 I/O）
+第2周：chapter02（数据类型 + 运算符 + 数学函数）
+第3周：chapter03（if + do + select case）
+第4周：chapter04（数组 + 矩阵运算 + 动态数组）
+第5周：chapter05（子例程 + 函数 + 递归）
+第6周：chapter06（文件读写 + 格式化输出）
+第7周：chapter07（模块化编程）
+第8周：examples/（综合工程应用练习）
+进阶：OpenMP 并行 → MPI → 面向对象（Fortran 2003+）
 ```
-
-#### 22. 面向对象编程（Fortran 2003+）
-- 类型继承（`extends`）
-- 多态（`class`）
-- 类型绑定过程（type-bound procedures）
-
-#### 23. 并行编程
-- **OpenMP**：共享内存并行，使用 `!$omp parallel` 指令
-- **MPI**：分布式内存并行，适合超算集群
-- **Coarray Fortran**：Fortran 2008 内置并行特性
 
 ---
 
-## 四、推荐学习资源
+## 七、推荐学习资源
 
-### 在线教程
-- [Fortran-lang 官方入门教程](https://fortran-lang.org/learn/) ⭐ 强烈推荐
-- [Learn Fortran（交互式）](https://www.learn-fortran.org/)
-- [Tutorialspoint Fortran 教程](https://www.tutorialspoint.com/fortran/)
-
-### 书籍
+### 教材
+- 《工程分析程序设计》（本项目依据的主要教材）
 - 《Fortran 95/2003 for Scientists and Engineers》by Chapman
 - 《Modern Fortran Explained》by Metcalf, Reid & Cohen
-- 《Introduction to Programming with Fortran》by Chivers & Sleightholme
 
-### 实践平台
-- [Compiler Explorer（Godbolt）](https://godbolt.org/)：在线编译运行
-- [OnlineGDB Fortran](https://www.onlinegdb.com/online_fortran_compiler)：在线 IDE
-
----
-
-## 五、推荐学习路线总结
-
-```
-第一周：环境搭建 → Hello World → 变量与类型 → 基本 I/O
-第二周：流程控制（if/do/select）→ 简单程序练习
-第三周：数组（一维、二维）→ 矩阵运算
-第四周：子例程与函数 → 代码模块化
-第五周：模块 → 文件操作 → 格式化输出
-第六周：现代特性（动态数组、派生类型）→ 综合项目
-进阶：OpenMP 并行 → MPI → 面向对象 → 性能优化
-```
+### 在线资源
+- [Fortran-lang 官方入门教程](https://fortran-lang.org/learn/) ⭐ 强烈推荐
+- [Compiler Explorer（Godbolt）](https://godbolt.org/)：在线编译，支持多版本编译器
+- [OnlineGDB Fortran](https://www.onlinegdb.com/online_fortran_compiler)：在线 IDE，无需安装
 
 ---
 
-## 六、练习项目建议
-
-1. **数值计算**：实现牛顿法求方程根、数值积分（梯形法则/辛普森法则）
-2. **线性代数**：矩阵乘法、高斯消元法求解线性方程组
-3. **物理模拟**：简谐运动、抛体运动轨迹计算
-4. **数据处理**：读取 CSV 文件并计算统计量（均值、标准差）
-5. **经典算法**：排序算法（冒泡、快速排序）的 Fortran 实现
-
----
-
-> 💡 **学习建议**：Fortran 重在实践。建议每学一个知识点就立即编写并运行相应代码，通过动手来加深理解。遇到问题可参考 [Fortran-lang Discourse 论坛](https://fortran-lang.discourse.group/) 寻求帮助。
+> 💡 **学习建议**：Fortran 重在实践。每学一个知识点就立即编写并运行 `chapter*/` 中对应的示例代码，
+> 修改参数、观察输出变化，这是掌握编程语言最高效的方式。
+> 遇到问题可参考 [Fortran-lang Discourse 论坛](https://fortran-lang.discourse.group/)。
